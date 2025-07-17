@@ -18,7 +18,7 @@ export const sendAuthLink = new Elysia().post('/authenticate', async ({ body }) 
         throw new Error('User not found!')
     }
 
-    const authLinkCode =createId()
+    const authLinkCode = createId()
 
     await db.insert(authLinks).values({
         userId: userFromEmail.id,
