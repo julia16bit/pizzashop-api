@@ -10,6 +10,11 @@ import { singlestoreDatabase } from 'drizzle-orm/singlestore-core';
 import { signOut } from './routes/sign-out';
 import { getProfile } from './routes/get-profile';
 import { getManagedRestaurant } from './routes/get-managed-restaurant';
+import { getOrderDetails } from './routes/get-order-details';
+import { approveOrder } from './routes/approve-orders';
+import { cancelOrder } from './routes/cancel-order';
+import { deliverOrder } from './routes/deliver-order';
+import { dispatchOrder } from './routes/dispatch-order';
 
 const app = new Elysia()
     .use(registerRestaurant)
@@ -18,6 +23,11 @@ const app = new Elysia()
     .use(signOut)
     .use(getProfile)
     .use(getManagedRestaurant)
+    .use(getOrderDetails)
+    .use(approveOrder)
+    .use(cancelOrder)
+    .use(deliverOrder)
+    .use(dispatchOrder)
 
 app.listen(3333, () => {
     console.log('HTTP server running!')
