@@ -1,12 +1,13 @@
 import Elysia, { t } from 'elysia'
 import { auth } from '../auth'
 import { db } from '../../db/connection'
+import { and } from 'drizzle-orm'
 
 export const getOrderDetails = new Elysia()
     .use(auth)
     // GET
     .get('/orders/:orderId', async ({ getCurrentUser, params, set }) => {
-        
+
         const { orderId } = params
         const user = await getCurrentUser()
 
@@ -53,7 +54,10 @@ export const getOrderDetails = new Elysia()
                 },
             },
             where(fields, { eq }) {
-                return eq(fields.id, orderId)
+                return and(
+                    eq(fields.id, orderId),
+                    eq(fields.restaurantId, restaurantId),
+                )
             },
         })
 
