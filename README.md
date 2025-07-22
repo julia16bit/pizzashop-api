@@ -252,14 +252,14 @@ O código ```(code)``` é obtido ao clicar no link que aparece no terminal após
 ### Pedidos do Restaurante
 > 🔐 Requer autenticação como gerente. Todas as rotas operam sobre os pedidos do restaurante que o usuário gerencia.
 
-| Método | Rota                        | Descrição                                                  |
-| ------ | --------------------------- | ---------------------------------------------------------- |
-| GET    | `/orders`                   | Lista pedidos com suporte a **filtros** e **paginação**    |
-| GET    | `/orders/:orderId`          | Obtém os **detalhes** de um pedido específico              |
-| PATCH  | `/orders/:orderId/approve`  | **Aprova** um pedido (de `pending` para `processing`)      |
-| PATCH  | `/orders/:orderId/cancel`   | **Cancela** um pedido                                      |
-| PATCH  | `/orders/:orderId/dispatch` | **Despacha** o pedido (de `processing` para `delivering`)  |
-| PATCH  | `/orders/:orderId/deliver`  | **Marca como entregue** (de `delivering` para `delivered`) |
+| Método | Rota                                              ㅤ     ㅤㅤㅤㅤㅤㅤ    | Descrição                                                  |
+| ------ | ----------------------------------------------------------------------- | ---------------------------------------------------------- |
+| GET    | `/orders`                                ㅤ             ㅤㅤㅤㅤㅤㅤ     | Lista pedidos com suporte a **filtros** e **paginação**    |
+| GET    | `/orders/:orderId`                        ㅤ           ㅤㅤㅤㅤㅤㅤ      | Obtém os **detalhes** de um pedido específico              |
+| PATCH  | `/orders/:orderId/approve`                  ㅤ         ㅤㅤㅤㅤㅤㅤ      | **Aprova** um pedido (de `pending` para `processing`)      |
+| PATCH  | `/orders/:orderId/cancel`                     ㅤ       ㅤㅤㅤㅤㅤㅤ      | **Cancela** um pedido                                      |
+| PATCH  | `/orders/:orderId/dispatch`                    ㅤ          ㅤㅤㅤㅤㅤㅤ  | **Despacha** o pedido (de `processing` para `delivering`)  |
+| PATCH  | `/orders/:orderId/deliver`                      ㅤ     ㅤㅤㅤㅤㅤㅤ      | **Marca como entregue** (de `delivering` para `delivered`) |
 
 O corpo da requisição nos endpoints PATCH geralmente é vazio. As mudanças de status são automáticas.
 
