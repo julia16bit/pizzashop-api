@@ -212,7 +212,7 @@ Servidor disponível em 📍 http://localhost:3333
 
 ### ⚡ Dados de Teste
 Após rodar ```bun run seed```, você terá:
-- Gerente padrão: admin@admin.com
+- Gerente padrão 📍 admin@admin.com
 
 - 2 clientes de exemplo
 
@@ -220,3 +220,73 @@ Após rodar ```bun run seed```, você terá:
 
 - 200 pedidos com status variados
 > 🔐 O sistema usa autenticação por magic link. Após testar a rota de login, o link de autenticação será exibido no terminal, via ```nodemailer```, simulando o envio de email.
+
+## Endpoints
+
+### Autenticação e Perfil
+> ⚠️ Todas as rotas protegidas exigem autenticação via magic link (token JWT via cookie).
+
+| Método | Rota                                | Descrição                                                                   |
+| ------ | ----------------------------------- | --------------------------------------------------------------------------- |
+| POST   | `/authenticate`                     | Envia um link mágico de autenticação para o email informado                 |
+| GET    | `/auth-links/authenticate?code=...` | Autentica o usuário com o código do link mágico (redireciona com cookie)    |
+| GET    | `/me`                               | Retorna os dados do perfil do usuário autenticado                           |
+| GET    | `/managed-restaurant`               | Retorna informações do restaurante gerenciado (caso o usuário seja gerente) |
+| POST   | `/sign-out`                         | Realiza logout do usuário, limpando o cookie de autenticação                |
+
+🔐 Enviar Link de Autenticação
+```http
+POST /authenticate
+Content-Type: application/json
+
+{
+  "email": "admin@admin.com"
+}
+```
+🔓 Autenticar com Código do Link
+```http
+GET /auth-links/authenticate?code=abc123
+```
+O código ```(code)``` é obtido ao clicar no link que aparece no terminal após o envio do email.
+
+### Pedidos do Restaurante
+> 🔐 Requer autenticação como gerente. Todas as rotas operam sobre os pedidos do restaurante que o usuário gerencia.
+
+| Método | Rota                        | Descrição                                                  |
+| ------ | --------------------------- | ---------------------------------------------------------- |
+| GET    | `/orders`                   | Lista pedidos com suporte a **filtros** e **paginação**    |
+| GET    | `/orders/:orderId`          | Obtém os **detalhes** de um pedido específico              |
+| PATCH  | `/orders/:orderId/approve`  | **Aprova** um pedido (de `pending` para `processing`)      |
+| PATCH  | `/orders/:orderId/cancel`   | **Cancela** um pedido                                      |
+| PATCH  | `/orders/:orderId/dispatch` | **Despacha** o pedido (de `processing` para `delivering`)  |
+| PATCH  | `/orders/:orderId/deliver`  | **Marca como entregue** (de `delivering` para `delivered`) |
+
+O corpo da requisição nos endpoints PATCH geralmente é vazio. As mudanças de status são automáticas.
+
+### Analytics / Métricas
+> 🔐 Requer autenticação como gerente. Fornece insights e estatísticas sobre desempenho do restaurante.
+
+| Método | Rota                                                                       | Descrição                                            |
+| ------ | -------------------------------------------------------------------------- | ---------------------------------------------------- |
+| GET    | `/metrics/month-receipt`                                                   | Receita do mês atual e comparação com o mês anterior |
+| GET    | `/metrics/day-orders-amount`                                               | Quantidade de pedidos de hoje vs ontem               |
+| GET    | `/metrics/month-orders-amount`                                             | Total de pedidos realizados no mês                   |
+| GET    | `/metrics/month-canceled-orders-amount`                                    | Quantidade de pedidos **cancelados** no mês          |
+| GET    | `/metrics/popular-products`                                                | **Top 5 produtos** mais pedidos no mês atual         |
+| GET    | `/metrics/daily-receipt-in-period?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD` | Receita diária em um período (máx. 7 dias)           |
+
+## Estrutura do Código
+```bash
+src/  
+├── db/                 # Camada de banco de dados  
+│   ├── schema/        # Definições de schema  
+│   ├── connection.ts  # Conexão com banco  
+│   ├── migrate.ts     # Executor de migrações  
+│   └── seed.ts        # Populador de dados  
+├── http/              # Camada HTTP  
+│   ├── routes/        # Handlers das rotas  
+│   ├── auth.ts        # Middleware de autenticação  
+│   └── server.ts      # Configuração do servidor  
+├── lib/               # Utilitários compartilhados  
+└── env.ts            # Configuração de ambiente
+```
