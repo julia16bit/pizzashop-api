@@ -8,14 +8,14 @@
   <img alt="ElysiaJS" src="https://img.shields.io/badge/ElysiaJS-2E3849?style=for-the-badge&logo=javascript&logoColor=white&color=2E3849&labelColor=2E3849" />
   <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-2E3849?style=for-the-badge&logo=postgresql&logoColor=white&color=2E3849&labelColor=2E3849" />
   <img alt="Drizzle ORM" src="https://img.shields.io/badge/Drizzle-2E3849?style=for-the-badge&logo=databricks&logoColor=white&color=2E3849&labelColor=2E3849" />
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.8.3-2E3849?style=for-the-badge&logo=typescript&logoColor=white&color=2E3849&labelColor=2E3849" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-2E3849?style=for-the-badge&logo=typescript&logoColor=white&color=2E3849&labelColor=2E3849" />
 </p>
 
 ## Descrição
 
-O Pizza Shop API é um sistema backend robusto desenvolvido em TypeScript para gerenciamento de pizzarias. Utilizando tecnologias modernas como Bun, ElysiaJS e Drizzle ORM, o projeto oferece uma solução escalável, segura e performática para controle de pedidos, usuários, restaurantes e métricas.
+O Pizza Shop API é um sistema back-end robusto desenvolvido em TypeScript para gerenciamento de pizzarias. Utilizando tecnologias modernas como Bun, ElysiaJS e Drizzle ORM, o projeto oferece uma solução escalável, segura e performática para controle de pedidos, usuários, restaurantes e métricas.
 
-Escolhi o Bun como runtime pela sua alta performance comparado ao Node ou Deno, otimizando o tempo de resposta e o uso de recursos.
+Escolhi o Bun como runtime pela sua alta performance comparado ao Node.JS ou Deno, otimizando o tempo de resposta e o uso de recursos.
 
 ## Tecnologias Utilizadas
 <div align="center">
@@ -113,3 +113,110 @@ Escolhi o Bun como runtime pela sua alta performance comparado ao Node ou Deno, 
 </table>
 
 </div>
+
+## Instalação dos Pré-requisitos
+
+### 📦 Instalar o Bun
+
+> Bun é o runtime JavaScript usado para executar o projeto. (https://bun.sh/)
+```bash
+powershell -c "irm bun.sh/install.ps1 | iex"
+```
+Após a instalação, reinicie o terminal e verifique:
+```bash
+bun --version
+```
+
+### 🐘 Instalar o PostgreSQL (caso não use Docker)
+No Ubuntu/Debian:
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+```
+
+## Como executar o projeto
+
+### ⚠️ Pré-requisitos
+
+- ✅ Bun instalado
+
+- ✅ PostgreSQL rodando (Docker ou local)
+
+- ✅ Node.js instalado (para compatibilidade)
+
+### ⚙️ Passos para Configuração e Execução
+1. Clone o repositório
+```bash
+git clone https://github.com/julia16bit/pizzashop-api.git
+cd pizzashop-api
+```
+2. Instale as dependências
+```bash
+bun install
+```
+3. Crie um arquivo .env na raiz do projeto com as variáveis essenciais
+```env
+API_BASE_URL=http://localhost:3333
+AUTH_REDIRECT_URL=http://localhost:3000
+DATABASE_URL=postgresql://docker:docker@localhost:5432/pizzashop
+JWT_SECRET_KEY=your-secret-key-here
+```
+4. Configure o banco de dados
+
+🔧 Bash (configuração local)
+```bash
+#!/bin/bash
+DB_NAME="pizzashop"
+DB_USER="docker"
+DB_PASS="docker"
+
+psql -U postgres -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';"
+psql -U postgres -c "CREATE DATABASE $DB_NAME OWNER $DB_USER;"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
+```
+🐳 Docker (via docker-compose)
+```yaml
+version: '3.1'
+
+services:
+  db:
+    image: postgres:16
+    container_name: pizzashop-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: pizzashop
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+    volumes:
+      - ./data:/var/lib/postgresql/data
+```
+Suba com:
+```bash
+docker-compose up -d
+```
+ 6. Aplique as migrações e popule o banco de dados
+```bash
+bun run generate    # Gerar arquivos de migração
+bun run migrate     # Aplicar migrações no banco
+bun run seed        # Popular banco com dados de teste
+```
+> Drizzle Studio (interface visual do banco de dados)
+> ``` bun run studio ```
+7. Execute o servidor
+```bash
+bun run dev
+```
+Servidor disponível em 📍 http://localhost:3333
+
+### ⚡ Dados de Teste
+Após rodar ```bun run seed```, você terá:
+- Gerente padrão: admin@admin.com
+
+- 2 clientes de exemplo
+
+- 1 restaurante com produtos cadastrados
+
+- 200 pedidos com status variados
+> 🔐 O sistema usa autenticação por magic link. Após testar a rota de login, o link de autenticação será exibido no terminal, via ```nodemailer```, simulando o envio de email.
